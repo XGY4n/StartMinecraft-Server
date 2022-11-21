@@ -16,12 +16,13 @@
 #include <shellapi.h>
 #include<sstream>
 #include<fstream>
+#include "SettingReader.h"
 #pragma comment(lib,"Iphlpapi.lib")  
 #pragma comment(lib, "ws2_32.lib")  
 
 #define _TXTPATH_ "C:\\Users\\Public\\Documents\\Mcport.txt"
-
-std::string cpolarStr = "cpolar tcp -remote-addr=2.tcp.cpolar.cn:12011 ";
+#define _INIPATH_ "C:\\Users\\Public\\Documents\\McportSetting.txt"
+std::string cpolarStr;// = "cpolar tcp -remote-addr=1.tcp.cpolar.cn:21476 ";
 
 typedef enum {
     GET_JAVA_PORT_ERROR,
@@ -106,7 +107,7 @@ std::string Get_PidPort(std::string JAVA_pid)
 {
     std::string temp_PidPort;
     std::fstream f;
-    JAVA_pid = "netstat -ano|findstr " + JAVA_pid + " | findstr \"LISTENING\"> C:\\Users\\Public\\Documents\\McPort.txt";
+    JAVA_pid = "netstat -ano|findstr " + JAVA_pid + " | findstr \"LISTENING\">" + _TXTPATH_;
     system(JAVA_pid.c_str());
     f.open(_TXTPATH_);
     std::string buf;
@@ -135,7 +136,7 @@ Server_stat McSeverMian()
     std::string Ipv4 = Ipv4Str();
     
     JAVA_pid = Get_Java_Pid("javaw.exe");
-    std::cout << JAVA_pid;
+    std::cout << JAVA_pid << std::endl;
     if (JAVA_pid == 0)
         return GET_JAVA_PID_ERROR;
 
@@ -150,7 +151,7 @@ Server_stat McSeverMian()
     return  START_SEVER_SUCCESS;
    // WinExec(cpolarStr.c_str(), SW_SHOWNORMAL);
 
-}
+}       
 
 
 void SeverStatCheck(Server_stat stat)
@@ -168,10 +169,12 @@ int main()
 {
     while (1)
     {
+        cpolarStr = Polarsetting();
         Server_stat stat = McSeverMian();
         SeverStatCheck(stat);
         getchar();
         system("cls");
+        //cpolarStr = "cpolar tcp -remote-addr=2.tcp.cpolar.cn:12011 ";
     }
     getchar();
     return 0;
